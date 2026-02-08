@@ -2,7 +2,7 @@
 .vscode/
 
 # Mengabaikan file 
-.txt
+*.txt
 lichess_db_standard_rated_2025-12.pgn.zst
 
 
