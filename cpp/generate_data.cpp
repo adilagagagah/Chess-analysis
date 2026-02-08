@@ -27,12 +27,13 @@ struct OrderedDict {
 };
 
 OrderedDict parse_single_game(const std::string &game_raw) {
-    OrderedDict game;
 
+    OrderedDict game;
     std::stringstream ss(game_raw);
-    std::string header_line;
 
     /* ================= HEADER ================= */
+    std::string header_line;
+
     while (std::getline(ss, header_line)) {
         if (header_line.empty()) break; // header selesai
 
@@ -46,6 +47,7 @@ OrderedDict parse_single_game(const std::string &game_raw) {
             start_val != std::string::npos &&
             end_val   != std::string::npos) {
 
+            // assign key value
             std::string key   = header_line.substr(start_key + 1, end_key - start_key - 1);
             std::string value = header_line.substr(start_val + 1, end_val - start_val - 1);
             game.insert(key, value);
@@ -62,21 +64,30 @@ OrderedDict parse_single_game(const std::string &game_raw) {
 
     // cleaning moves
     moves_str = std::regex_replace(moves_str, std::regex(R"(\{.*?\})"), "");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.\.\.)"), "");
+    moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.\.\.)"), ",");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.)"), ".");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\s*(1-0|0-1|1/2-1/2)\s*$)"), "");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\s+)"), "");
+
+    // count moves
+    int w_count = moves_str.empty()
+        ? 0
+        : std::count(moves_str.begin(), moves_str.end(), '.');
+
+    int b_count = moves_str.empty()
+        ? 0
+        : std::count(moves_str.begin(), moves_str.end(), ',');
+
+    // cleaning moves
+    moves_str = std::regex_replace(moves_str, std::regex(R"(\,)"), "");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\.)"), " ");
     moves_str = std::regex_replace(moves_str, std::regex(R"(^\s+)"), "");
 
+    // assign key value
     game.insert("move", moves_str);
-
-    /* ================= COUNT MOVES ================= */
-    int num_moves = moves_str.empty()
-        ? 0
-        : std::count(moves_str.begin(), moves_str.end(), ' ') + 1;
-
-    game.insert("num_move", std::to_string(num_moves));
+    game.insert("w_move", std::to_string(w_count));
+    game.insert("b_move", std::to_string(b_count));
+    game.insert("player_move", std::to_string(w_count + b_count));
 
     return game;
 }
