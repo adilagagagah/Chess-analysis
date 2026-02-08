@@ -12,74 +12,7 @@
 
 using namespace std;
 
-static const int games_to_read = 40;  // jumlah game yang ingin dilihat
-
-
-struct OrderedDict {
-    std::unordered_map<std::string, std::string> data;
-    std::vector<std::string> order;
-
-    void insert(const std::string &key, const std::string &value) {
-        if (data.find(key) == data.end()) {
-            order.push_back(key);
-        }
-        data[key] = value;
-    }
-};
-
-OrderedDict parse_single_game(const std::string &game_raw) {
-    OrderedDict game;
-
-    std::stringstream ss(game_raw);
-    std::string line;
-    std::string moves_str;
-
-    /* ================= HEADER ================= */
-    while (std::getline(ss, line)) {
-        if (line.empty()) break; // header selesai
-
-        size_t start_key = line.find('[');
-        size_t end_key   = line.find(' ', start_key);
-        size_t start_val = line.find('"', end_key);
-        size_t end_val   = line.rfind('"');
-
-        if (start_key != std::string::npos &&
-            end_key   != std::string::npos &&
-            start_val != std::string::npos &&
-            end_val   != std::string::npos) {
-
-            std::string key   = line.substr(start_key + 1, end_key - start_key - 1);
-            std::string value = line.substr(start_val + 1, end_val - start_val - 1);
-            game.insert(key, value);
-        }
-    }
-
-    /* ================= MOVES ================= */
-    std::string moves_line;
-    while (std::getline(ss, moves_line)) {
-        moves_str += moves_line + " ";
-    }
-
-    // cleaning moves
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\{.*?\})"), "");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.\.\.)"), "");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.)"), ".");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\s*(1-0|0-1|1/2-1/2)\s*$)"), "");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\s+)"), "");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\.)"), " ");
-    moves_str = std::regex_replace(moves_str, std::regex(R"(^\s+)"), "");
-
-    game.insert("move", moves_str);
-
-    /* ================= COUNT MOVES ================= */
-    int num_moves = moves_str.empty()
-        ? 0
-        : std::count(moves_str.begin(), moves_str.end(), ' ') + 1;
-
-    game.insert("num_move", std::to_string(num_moves));
-
-    return game;
-}
+static const int games_to_read = 2;  // jumlah game yang ingin dilihat
 
 
 int main() {
@@ -103,7 +36,7 @@ int main() {
     vector<char> inBuf(IN_BUF_SIZE);
     vector<char> outBuf(OUT_BUF_SIZE);
 
-    std::vector<OrderedDict> all_games;
+    std::vector<string> all_games;
     vector<string> games;   // menyimpan beberapa game
     string current_game;
     
@@ -134,9 +67,6 @@ int main() {
                     // simpan game sebelumnya
                     if (!games.empty() || current_game.size() > 7) {
                         games.push_back(current_game.substr(0, current_game.size()-7));
-
-                        OrderedDict parsed = parse_single_game(current_game.substr(0, current_game.size()-7));
-                        all_games.push_back(parsed);
                         current_game = "[Event "; // mulai game baru
                     }
                 }
@@ -146,20 +76,13 @@ int main() {
     }
 
     ZSTD_freeDCtx(dctx);
-
-    // cout << "[DEBUG] RAW GAME:\n" << "\n";
-    // tampilkan semua game yang berhasil dibaca
-    // for (size_t i = 0; i < games.size(); ++i) {
-    //     cout << "===== GAME " << (i + 1) << " =====\n";
-    //     cout << games[i] << "\n";
-    // }
-
+    
     
     cout << "\n\n[DEBUG] DICTIONARY & CLEAN GAME:" << "\n";
     // tampilkan semua game yang berhasil dibaca
     for (size_t i = 0; i < games.size(); ++i) {
-        // cout << "\n===== GAME " << (i + 1) << " =====\n";
-        // cout << games[i] << "\n";
+        cout << "\n===== GAME " << (i + 1) << " =====\n";
+        cout << games[i] << "\n";
 
         std::vector<std::string> header_order;
         std::unordered_map<std::string, std::string> game_dict;
@@ -219,24 +142,12 @@ int main() {
         header_order.push_back("num_move"); // simpan urutan
 
         // tampilkan
-        // for (const auto &key : header_order) {
-        //     std::cout << key << " : " << game_dict[key] << "\n";
-        // }
-
-    }
-
-
-
-    // tampilkan
-    for (size_t i = 0; i < all_games.size(); ++i) {
-
-        cout << "\n===== GAME " << (i + 1) << " =====\n";
-        const auto &game = all_games[i];
-
-        for (const auto &key : game.order) {
-            std::cout << key << " : " << game.data.at(key) << "\n";
+        for (const auto &key : header_order) {
+            std::cout << key << " : " << game_dict[key] << "\n";
         }
+
     }
+
 
     return 0;
 }
