@@ -12,7 +12,7 @@
 
 using namespace std;
 
-static const int games_to_read = 2;  // jumlah game yang ingin dilihat
+static const int games_to_read = 5;  // jumlah game yang ingin dilihat
 
 
 int main() {
@@ -119,9 +119,9 @@ int main() {
             moves_str += moves_line + " ";
         }
 
-        // hapus nomor langkah dan komentar
+        // hapus nomor langkah dan waktu
         std::regex dots_regex(R"(\d+\.\.\.)");
-        moves_str = std::regex_replace(moves_str, dots_regex, ""); // hapus titik langkah
+        moves_str = std::regex_replace(moves_str, dots_regex, ","); // hapus titik langkah
         std::regex number_regex(R"(\d+\.)");
         moves_str = std::regex_replace(moves_str, number_regex, "."); // hapus angka langkah
         std::regex comment_regex(R"(\{.*?\})");
@@ -130,16 +130,26 @@ int main() {
         moves_str = std::regex_replace(moves_str, result_regex, ""); // hapus result
         std::regex extra_spaces(R"(\s+)");
         moves_str = std::regex_replace(moves_str, extra_spaces, ""); // rapikan spasi
+
+        int w_count = std::count(moves_str.begin(), moves_str.end(), '.');
+        game_dict["w_move"] = std::to_string(w_count);
+
+        int b_count = std::count(moves_str.begin(), moves_str.end(), ',');
+        game_dict["b_move"] = std::to_string(b_count);
+
+        game_dict["player_move"] = std::to_string(w_count + b_count);
         
         moves_str = std::regex_replace(moves_str, std::regex(R"(\.)"), " ");
+        moves_str = std::regex_replace(moves_str, std::regex(R"(\,)"), "");
         moves_str = std::regex_replace(moves_str, std::regex(R"(^\s+)"), "");
 
         game_dict["move"] = moves_str;
-        header_order.push_back("move"); // simpan urutan
 
-        int count = std::count(moves_str.begin(), moves_str.end(), ' ') + 1;
-        game_dict["num_move"] = std::to_string(count);
-        header_order.push_back("num_move"); // simpan urutan
+        // simpan urutan
+        header_order.push_back("move");
+        header_order.push_back("w_move");
+        header_order.push_back("b_move");
+        header_order.push_back("player_move");
 
         // tampilkan
         for (const auto &key : header_order) {
