@@ -140,7 +140,7 @@ int main() {
         game_dict["player_move"] = std::to_string(w_count + b_count);
         
         moves_str = std::regex_replace(moves_str, std::regex(R"(\.)"), " ");
-        moves_str = std::regex_replace(moves_str, std::regex(R"(\,)"), "");
+        moves_str = std::regex_replace(moves_str, std::regex(R"(\,)"), " ");
         moves_str = std::regex_replace(moves_str, std::regex(R"(^\s+)"), "");
 
         game_dict["move"] = moves_str;

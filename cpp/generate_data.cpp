@@ -11,7 +11,7 @@
 
 using namespace std;
 
-static const int games_to_read = 5;  // jumlah game yang ingin dilihat
+static const int games_to_read = 10;  // jumlah game yang ingin dilihat
 
 
 struct OrderedDict {
@@ -79,7 +79,7 @@ OrderedDict parse_single_game(const std::string &game_raw) {
         : std::count(moves_str.begin(), moves_str.end(), ',');
 
     // cleaning moves
-    moves_str = std::regex_replace(moves_str, std::regex(R"(\,)"), "");
+    moves_str = std::regex_replace(moves_str, std::regex(R"(\,)"), " ");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\.)"), " ");
     moves_str = std::regex_replace(moves_str, std::regex(R"(^\s+)"), "");
 
@@ -127,9 +127,51 @@ bool filter(const OrderedDict &game, int min_elo = 2000) {
     }
 };
 
+struct CSVWriter {
+    std::ofstream fout;
+    bool header_written = false;
+
+    CSVWriter(const std::string &filename) {
+        fout.open(filename);
+        if (!fout) {
+            throw std::runtime_error("Cannot open CSV file");
+        }
+    }
+
+    void write_game(const OrderedDict &game) {
+        // tulis header sekali
+        if (!header_written) {
+            for (size_t i = 0; i < game.order.size(); ++i) {
+                fout << game.order[i];
+                if (i + 1 < game.order.size()) fout << ",";
+            }
+            fout << "\n";
+            header_written = true;
+        }
+
+        // tulis row
+        for (size_t i = 0; i < game.order.size(); ++i) {
+            const std::string &key = game.order[i];
+            std::string value = game.data.at(key);
+
+            // escape double quote
+            size_t pos = 0;
+            while ((pos = value.find('"', pos)) != std::string::npos) {
+                value.insert(pos, "\"");
+                pos += 2;
+            }
+
+            fout << "\"" << value << "\"";
+            if (i + 1 < game.order.size()) fout << ",";
+        }
+        fout << "\n";
+    }
+};
+
 
 int main() {
     const string file_path = "C:/Users/gagah/Documents/Portofolios/Chess-analysis/lichess_db_standard_rated_2025-12.pgn.zst";
+    CSVWriter csv_target("C:/Users/gagah/Documents/Portofolios/Chess-analysis/data/test_cpp_lichess_rapid_elo2000.csv");
 
     // Baca file .zst secara streaming
     ifstream fin(file_path, ios::binary);
@@ -151,7 +193,8 @@ int main() {
     vector<char> inBuf(IN_BUF_SIZE);
     vector<char> outBuf(OUT_BUF_SIZE);
 
-    std::vector<OrderedDict> all_games;  // menyimpan beberapa game
+    std::vector<OrderedDict> all_games;  // menyimpan seluruh game
+    string temp_game;
     string current_game;
     
     bool game_finished = false;
@@ -183,10 +226,12 @@ int main() {
                     // simpan game sebelumnya
                     if (!all_games.empty() || current_game.size() > 7) {
 
-                        OrderedDict game = parse_single_game(current_game.substr(0, current_game.size()-7));
+                        temp_game = current_game.substr(0, current_game.size()-7);
+                        OrderedDict game = parse_single_game(temp_game);
 
                         if(filter(game)){
                             all_games.push_back(game);
+                            csv_target.write_game(game);
                         }
                         current_game = "[Event "; // mulai game baru
                     }
