@@ -11,7 +11,7 @@
 
 using namespace std;
 
-static const int games_to_read = 2;  // jumlah game yang ingin dilihat
+static const int games_to_read = 5;  // jumlah game yang ingin dilihat
 
 
 struct OrderedDict {
@@ -81,6 +81,41 @@ OrderedDict parse_single_game(const std::string &game_raw) {
     return game;
 }
 
+bool filter(const OrderedDict &game, int min_elo = 2000) {
+    auto w_elo = game.data.find("WhiteElo");
+    auto b_elo = game.data.find("BlackElo");
+    auto t_con = game.data.find("TimeControl");
+
+    // cek apakah data ada di dalam dictionary game
+    if (w_elo == game.data.end() || b_elo == game.data.end() || t_con == game.data.end()){
+        return false;
+    }
+
+    try {
+        int white_elo = std::stoi(w_elo->second);
+        int black_elo = std::stoi(b_elo->second);
+
+        // filter elo
+        if (white_elo < min_elo || black_elo < min_elo){
+            return false;
+        }
+
+        const std::string &time_con = t_con->second; 
+        size_t plus_sign = time_con.find('+');
+        int base_time = std::stoi(time_con.substr(0, plus_sign));
+
+        // filter time control
+        if (base_time < 600 || base_time > 1800){
+            return false;
+        }
+
+        return true;
+
+    } catch (...) {
+        return false;
+    }
+};
+
 
 int main() {
     const string file_path = "C:/Users/gagah/Documents/Portofolios/Chess-analysis/lichess_db_standard_rated_2025-12.pgn.zst";
@@ -138,7 +173,10 @@ int main() {
                     if (!all_games.empty() || current_game.size() > 7) {
 
                         OrderedDict game = parse_single_game(current_game.substr(0, current_game.size()-7));
-                        all_games.push_back(game);
+
+                        if(filter(game)){
+                            all_games.push_back(game);
+                        }
                         current_game = "[Event "; // mulai game baru
                     }
                 }
