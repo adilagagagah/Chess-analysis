@@ -1,0 +1,9 @@
+# Mengabaikan folder
+.vscode/
+
+# Mengabaikan file 
+.txt
+lichess_db_standard_rated_2025-12.pgn.zst
+
+
+# git rm --cached <nama_file>
