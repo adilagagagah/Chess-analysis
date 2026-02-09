@@ -55,4 +55,4 @@ https://lichess.org/jG0rRqVY,jangine,vanibot,BOT,BOT,2107,2018,1-0,+4,-4,600+15,
 https://lichess.org/5qgfZ63i,GarboBot,sseh-c,BOT,BOT,2055,2017,1-0,+5,-5,600+1,Normal,E20,Nimzo-Indian Defense: Romanishin Variation, English Hybrid
 https://lichess.org/CdUcd92w,Euwe-chess-engine,bot64jaques,BOT,BOT,2592,2470,1-0,+3,-4,600+2,Normal,B12,Caro-Kann Defense: Advance Variation, Short Variation
 https://lichess.org/jB6KaHsU,Nyxite,Gold_Engine,BOT,BOT,3028,2827,1/2-1/2,-3,+4,600+5,Normal,C54,Italian Game: Classical Variation, Giuoco Pianissimo
-https://lichess.org/tQyzPv3z,byte-knight,PeachFruit,BOT,BOT,2124,2283,0-1,-3,+3,1800+1,Normal,A48,Queen's Pawn Game: Barry Attack, Grünfeld Variation
+https://lichess.org/tQyzPv3z,byte-knight,PeachFruit,BOT,BOT,2124,2283,0-1,-3,+3,1800+1,Normal,A48,Queen's Pawn Game: Barry Attack, Grünfeld Variationlink,white,black,white_titled,black_titled,white_elo,black_elo,result,white_rating_diff,black_rating_diff,time_control,termination,eco,opening
