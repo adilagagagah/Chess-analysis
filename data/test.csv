@@ -1,0 +1,58 @@
+link,white,black,white_titled,black_titled,white_elo,black_elo,result,white_rating_diff,black_rating_diff,time_control,termination,eco,opening
+https://lichess.org/n0QZcjc5,Lambergar,Pat9471,BOT,BOT,2594,2882,0-1,-2,+2,1800+2,Normal,C67,Ruy Lopez: Berlin Defense, Rio Gambit Accepted
+https://lichess.org/3HtsF307,kopyto_dev,sseh-c,BOT,BOT,2040,2028,1-0,+5,-5,600+1,Normal,A48,Queen's Pawn Game: Barry Attack
+https://lichess.org/JUsgtVMA,jpg-bot,SaxtonEngine,BOT,BOT,2724,2769,0-1,-5,+5,600+2,Normal,C11,French Defense: Steinitz Variation, Boleslavsky Variation
+https://lichess.org/preV6tLW,MAGIC11BOT,ArasanX,BOT,BOT,2869,2990,1/2-1/2,+1,-2,900+5,Normal,C89,Ruy Lopez: Marshall Attack, Modern Variation
+https://lichess.org/aZmaeCS7,chmod-bot,RavenEngine,BOT,BOT,2530,2368,1-0,+4,-3,900+0,Normal,B52,Sicilian Defense: Moscow Variation, Main Line
+https://lichess.org/OpHKieM4,RavenEngine,chmod-bot,BOT,BOT,2368,2530,1-0,+8,-8,900+2,Time forfeit,C80,Ruy Lopez: Open
+https://lichess.org/bbWMZcqN,gekkammi-bot,byte-knight,BOT,BOT,2197,2238,1-0,+6,-6,600+1,Normal,B00,Nimzowitsch Defense: Scandinavian Variation, Exchange Variation
+https://lichess.org/5aadWGjY,Boosted_Maia_1900,Oxide9,BOT,BOT,2066,2219,0-1,-4,+3,600+1,Normal,C55,Italian Game: Two Knights Defense, Modern Bishop's Opening
+https://lichess.org/JJ0Da3uk,matmoi,natto-bot,BOT,BOT,2121,2121,1/2-1/2,+0,+0,600+1,Normal,A19,English Opening: Anglo-Indian Defense, Flohr-Mikenas-Carls Variation, Nei Gambit
+https://lichess.org/VxXxde4m,Euwe-chess-engine,FataliiBot,BOT,BOT,2591,2303,1-0,+2,-2,600+2,Normal,C11,French Defense: Classical Variation, Burn Variation
+https://lichess.org/bAz2R0BE,WolfuhfuhBot,Goldfish-Engine,BOT,BOT,2288,2250,1-0,+5,-5,600+0,Normal,B20,Sicilian Defense: Lasker-Dunne Attack
+https://lichess.org/A6DtE5Xn,MAGIC11BOT,grail-bot,BOT,BOT,2870,2560,1-0,+2,-2,600+0,Normal,C13,French Defense: Alekhine-Chatard Attack, Breyer Variation
+https://lichess.org/FDEje7Mo,ClockworkEngine,jpg-bot,BOT,BOT,2713,2719,1/2-1/2,+0,+0,600+2,Normal,E46,Nimzo-Indian Defense: Normal Variation
+https://lichess.org/zSJLm4kP,DarkOnBot,ArasanX,BOT,BOT,3028,2988,1/2-1/2,+0,+1,600+3,Normal,B90,Sicilian Defense: Najdorf Variation, English Attack
+https://lichess.org/kcvaXieD,Oxide9,waychess-bot,BOT,BOT,2222,2143,0-1,-7,+7,600+3,Normal,B12,Caro-Kann Defense: De Bruycker Defense
+https://lichess.org/O55UkEei,kopyto_dev,capeta-chess,BOT,BOT,2045,2077,1-0,+7,-6,600+1,Normal,B54,Sicilian Defense: Modern Variations, Main Line
+https://lichess.org/6q5acAo4,ClockworkEngine,Euwe-chess-engine,BOT,BOT,2710,2593,1-0,+6,-4,600+1,Normal,D43,Semi-Slav Defense
+https://lichess.org/0wsX2N2D,sseh-c,natto-bot,BOT,BOT,2023,2121,0-1,-5,+5,600+5,Normal,D85,Grünfeld Defense: Exchange Variation, Modern Exchange Variation
+https://lichess.org/BF1SvjKC,SleepMindEngine,Pat9471,BOT,BOT,2374,2884,0-1,-1,+0,1800+10,Normal,C67,Ruy Lopez: Berlin Defense, Rio Gambit Accepted
+https://lichess.org/nrgUOSAw,WoodStyleEngine,Weiawaga,BOT,BOT,2842,2675,1-0,+6,-3,1500+1,Normal,B28,Sicilian Defense: O'Kelly Variation, Yerevan System
+https://lichess.org/gBVKrG4Q,likeawizard-bot,waychess-bot,BOT,BOT,2126,2143,1/2-1/2,+0,+0,600+1,Normal,C00,French Defense: St. George Defense
+https://lichess.org/tgNj2UYP,MAGIC11BOT,Licht94,BOT,BOT,2692,2819,1/2-1/2,+2,-1,1800+10,Normal,C11,French Defense: Classical Variation, Burn Variation, Morozevich Line
+https://lichess.org/zEo2Amr2,duchessAI,ViolentStockfish,BOT,BOT,2584,2485,1-0,+4,-10,1800+2,Normal,D02,Queen's Pawn Game: Zukertort Variation
+https://lichess.org/MeMBFxYg,kowalabi,TroutBot,BOT,BOT,2081,2211,0-1,-8,+4,1200+8,Normal,A00,Sodium Attack
+https://lichess.org/aS7m1BVF,AlwaysPlayMystery,Nyxite,BOT,BOT,3017,3024,1/2-1/2,+0,+0,600+5,Normal,C67,Ruy Lopez: Berlin Defense, Rio Gambit Accepted
+https://lichess.org/QogM0aSW,Eichkatzerl,grail-bot,BOT,BOT,2249,2558,0-1,-2,+2,600+2,Normal,A45,Indian Defense
+https://lichess.org/KrbGuvyQ,PeachFruit,GNUPassant,BOT,BOT,2444,2332,1/2-1/2,-2,+2,900+5,Normal,E38,Nimzo-Indian Defense: Classical Variation, Berlin Variation
+https://lichess.org/BtbnTjxg,matmoi,simpleEval,BOT,BOT,2121,2249,1-0,+8,-8,600+3,Normal,B08,Pirc Defense: Classical Variation, Schlechter Variation
+https://lichess.org/WzHrVtTN,Lynx_BOT,cinder-bot,BOT,BOT,2709,3035,0-1,-2,+1,600+2,Normal,C54,Italian Game: Classical Variation, Giuoco Pianissimo, with d6
+https://lichess.org/PIiIKLQA,WoodStyleEngine,pawn_git,BOT,BOT,2842,2611,1/2-1/2,-5,+3,1500+1,Normal,A20,English Opening: King's English Variation
+https://lichess.org/IINqdE7y,SaxtonEngine,ArasanX,BOT,BOT,2774,2988,0-1,-3,+3,600+3,Normal,C19,French Defense: Winawer Variation, Advance Variation
+https://lichess.org/7v5am2zB,chmod-bot,RavenEngine,BOT,BOT,2525,2373,1-0,+3,-3,600+0,Time forfeit,B13,Caro-Kann Defense: Exchange Variation
+https://lichess.org/arxkUAGw,Weiawaga,WoodStyleEngine,BOT,BOT,2672,2848,1/2-1/2,+3,-5,1500+1,Normal,B48,Sicilian Defense: Taimanov Variation, Bastrikov Variation, English Attack
+https://lichess.org/W45dOkmm,Nyxite,ViolentStockfish,BOT,BOT,3024,2771,1-0,+2,-2,600+5,Normal,D37,Queen's Gambit Declined: Harrwitz Attack, Main Line
+https://lichess.org/2XozpN04,capeta-chess,natto-bot,BOT,BOT,2071,2126,1-0,+6,-7,600+1,Normal,B42,Sicilian Defense: Kan Variation, Swiss Cheese Variation
+https://lichess.org/iHTtoEia,jangine,likeawizard-bot,BOT,BOT,2113,2126,0-1,-6,+6,600+1,Normal,A57,Benko Gambit Declined: Main Line
+https://lichess.org/tIBKQrj4,gekkammi-bot,Eichkatzerl,BOT,BOT,2203,2247,1/2-1/2,+1,-1,600+0,Normal,C10,French Defense: Rubinstein Variation
+https://lichess.org/ZRGrIL9W,fornax-engine,Goldfish-Engine,BOT,BOT,2343,2245,0-1,-7,+8,600+3,Normal,B00,Pirc Defense
+https://lichess.org/WGLtmPJ6,chmod-bot,RavenEngine,BOT,BOT,2528,2370,1-0,+3,-3,900+2,Normal,B22,Sicilian Defense: Delayed Alapin Variation
+https://lichess.org/mkrmpbqp,Oxide9,Eichkatzerl,BOT,BOT,2215,2247,1-0,+6,-6,600+1,Normal,C10,French Defense: Rubinstein Variation
+https://lichess.org/IElwFQU6,ArasanX,cinder-bot,BOT,BOT,2991,3036,1/2-1/2,+0,+0,600+10,Normal,D43,Semi-Slav Defense
+https://lichess.org/8r5Mn6mF,DarkOnBot,Weiawaga,BOT,BOT,2870,2675,1-0,+4,-3,1800+1,Normal,B90,Sicilian Defense: Najdorf Variation, English Attack
+https://lichess.org/UNNaXIAh,ViolentStockfish,Nyxite,BOT,BOT,2769,3026,0-1,-3,+2,600+5,Normal,D38,Queen's Gambit Declined: Ragozin Defense
+https://lichess.org/FXYCCiW1,PeachFruit,ClockworkEngine,BOT,BOT,2442,2716,0-1,-2,+3,600+10,Normal,C19,French Defense: Winawer Variation, Advance Variation
+https://lichess.org/gykGuJRa,jpg-bot,ClockworkEngine,BOT,BOT,2719,2716,1/2-1/2,+0,+0,600+2,Normal,B63,Sicilian Defense: Richter-Rauzer Variation, Classical Variation
+https://lichess.org/k1r4kVjJ,Lynx_BOT,RavenEngine,BOT,BOT,2481,2257,0-1,-9,+9,1200+8,Time forfeit,C65,Ruy Lopez: Berlin Defense
+https://lichess.org/mCbF1UE3,Boosted_Maia_1900,sseh-c,BOT,BOT,2062,2018,1/2-1/2,-1,+1,600+1,Normal,B90,Sicilian Defense: Najdorf Variation, English Attack
+https://lichess.org/4nU9a630,chmod-bot,RavenEngine,BOT,BOT,2534,2367,1-0,+3,-3,600+0,Normal,C42,Petrov's Defense: Classical Attack, Mason-Showalter Variation
+https://lichess.org/OeS5KiUs,GNUPassant,Euwe-chess-engine,BOT,BOT,2334,2589,0-1,-2,+3,600+1,Normal,D30,Queen's Gambit Declined: Traditional Variation
+https://lichess.org/qmp7HmFA,SaxtonEngine,jpg-bot,BOT,BOT,2771,2719,1/2-1/2,-1,+1,600+1,Insufficient material,A45,Indian Defense
+https://lichess.org/2zd65T6X,ArasanX,SleepMindEngine,BOT,BOT,2991,2517,1-0,+1,-1,600+3,Normal,A13,English Opening: Neo-Catalan
+https://lichess.org/X3OMvW52,m8-bot,RavenEngine,BOT,BOT,2120,2364,0-1,-2,+2,600+3,Normal,A00,Sodium Attack
+https://lichess.org/jG0rRqVY,jangine,vanibot,BOT,BOT,2107,2018,1-0,+4,-4,600+15,Normal,B06,Modern Defense: Pseudo-Austrian Attack
+https://lichess.org/5qgfZ63i,GarboBot,sseh-c,BOT,BOT,2055,2017,1-0,+5,-5,600+1,Normal,E20,Nimzo-Indian Defense: Romanishin Variation, English Hybrid
+https://lichess.org/CdUcd92w,Euwe-chess-engine,bot64jaques,BOT,BOT,2592,2470,1-0,+3,-4,600+2,Normal,B12,Caro-Kann Defense: Advance Variation, Short Variation
+https://lichess.org/jB6KaHsU,Nyxite,Gold_Engine,BOT,BOT,3028,2827,1/2-1/2,-3,+4,600+5,Normal,C54,Italian Game: Classical Variation, Giuoco Pianissimo
+https://lichess.org/tQyzPv3z,byte-knight,PeachFruit,BOT,BOT,2124,2283,0-1,-3,+3,1800+1,Normal,A48,Queen's Pawn Game: Barry Attack, Grünfeld Variation

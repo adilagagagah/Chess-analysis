@@ -6,12 +6,18 @@
 #include <sstream>
 #include <unordered_map>
 #include <regex>
+#include <chrono>
+#include <iomanip>
 
 
 
 using namespace std;
+using namespace std::chrono;
 
-static const int games_to_read = 10;  // jumlah game yang ingin dilihat
+static const int games_to_read = 200;  // jumlah game yang ingin dilihat
+static const size_t  TOTAL_GAMES = 94847276;
+static const size_t  total_csv = 100000;
+static const size_t  BATCH_SIZE = 10;
 
 using Schema = std::vector<std::pair<std::string, std::string>>;
 const Schema CSV_SCHEMA = {
@@ -37,6 +43,25 @@ const Schema CSV_SCHEMA = {
     {"move", "moves"}
 };
 
+
+void log_progress(long scanned, long collected, long total, std::chrono::steady_clock::time_point start_time) {
+
+    auto now = steady_clock::now();
+    double elapsed_sec = duration_cast<seconds>(now - start_time).count();
+
+    double speed = scanned > 0 ? scanned / elapsed_sec : 0.0;
+    double pct = (double)scanned / total * 100.0;
+    double eta_sec = speed > 0 ? (total - scanned) / speed : 0.0;
+
+    cerr << "\r[INFO] "
+         << "Scanned: " << scanned
+         << " | Collected: " << collected
+         << " | " << fixed << setprecision(2) << pct << "%"
+         << " | Speed: " << fixed << setprecision(0) << speed << " g/s"
+         << " | Elapsed: " << (long)elapsed_sec << " s"
+         << " | ETA: " << (long)eta_sec << " s"
+         << flush;
+}
 
 struct OrderedDict {
     std::unordered_map<std::string, std::string> data;
@@ -210,8 +235,18 @@ struct CSVWriter {
     }
 };
 
+void flush_batch_to_csv(std::vector<OrderedDict> &batch, CSVWriter &csv) {
+    for (const auto &game : batch) {
+        csv.write_game(game);
+    }
+    batch.clear();  // kosongkan batch
+}
+
 
 int main() {
+    cerr << "[INFO] Starting PGN parsing..." << endl;
+    auto start_time = std::chrono::steady_clock::now();
+    
     const string file_path = "C:/Users/gagah/Documents/Portofolios/Chess-analysis/lichess_db_standard_rated_2025-12.pgn.zst";
     CSVWriter csv_target("C:/Users/gagah/Documents/Portofolios/Chess-analysis/data/test_cpp_lichess_rapid_elo2000.csv");
 
@@ -238,6 +273,9 @@ int main() {
     std::vector<OrderedDict> all_games;  // menyimpan seluruh game
     string temp_game;
     string current_game;
+
+    size_t scanned_games = 0;
+    size_t collected_games = 0;
     
     bool game_finished = false;
 
@@ -266,17 +304,28 @@ int main() {
                 // jika menemukan "[Event " dan current_game sudah punya data
                 if (current_game.size() > 7 && current_game.substr(current_game.size()-7) == "[Event ") {
                     // simpan game sebelumnya
-                    if (!all_games.empty() || current_game.size() > 7) {
+                    if (current_game.size() > 7) {
 
+                        // mendapatkan data satu game
                         temp_game = current_game.substr(0, current_game.size()-7);
                         OrderedDict game = parse_single_game(temp_game);
 
                         if(filter(game)){
                             OrderedDict safe_csv_game = normalize_to_schema(game, CSV_SCHEMA);
                             all_games.push_back(safe_csv_game);
-                            csv_target.write_game(safe_csv_game);
+                            // csv_target.write_game(safe_csv_game);
+                            collected_games++;
+                            
+                            if (all_games.size() >= BATCH_SIZE) {
+                                flush_batch_to_csv(all_games, csv_target);
+                            }
                         }
                         current_game = "[Event "; // mulai game baru
+                        scanned_games++;
+
+                        if (scanned_games % 10 == 0){
+                            log_progress(scanned_games, collected_games, TOTAL_GAMES, start_time);
+                        }
                     }
                 }
                 if (all_games.size() >= games_to_read) break;
@@ -287,15 +336,26 @@ int main() {
     ZSTD_freeDCtx(dctx);
 
     // tampilkan
-    for (size_t i = 0; i < all_games.size(); ++i) {
+    // for (size_t i = 0; i < all_games.size(); ++i) {
 
-        cout << "\n===== GAME " << (i + 1) << " =====\n";
-        const auto &game = all_games[i];
+    //     cout << "\n===== GAME " << (i + 1) << " =====\n";
+    //     const auto &game = all_games[i];
 
-        for (const auto &key : game.order) {
-            std::cout << key << " : " << game.data.at(key) << "\n";
-        }
-    }
+    //     for (const auto &key : game.order) {
+    //         std::cout << key << " : " << game.data.at(key) << "\n";
+    //     }
+    // }
+
+    // logging
+    auto end_time = std::chrono::steady_clock::now();
+    auto total_sec =
+        std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+
+    cerr << "\n[INFO] Finished." << endl;
+    cerr << "[INFO] Total scanned   : " << scanned_games << endl;
+    cerr << "[INFO] Total collected : " << collected_games << endl;
+    cerr << "[INFO] Total time      : " << total_sec << " seconds" << endl;
+
 
     return 0;
 }
