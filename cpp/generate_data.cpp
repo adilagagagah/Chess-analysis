@@ -13,6 +13,30 @@ using namespace std;
 
 static const int games_to_read = 10;  // jumlah game yang ingin dilihat
 
+using Schema = std::vector<std::pair<std::string, std::string>>;
+const Schema CSV_SCHEMA = {
+    {"Event", "event"},
+    {"Site", "link"},
+    {"Date", "date"},
+    {"White", "white"},
+    {"Black", "black"},
+    {"WhiteTitle", "white_titled"},
+    {"BlackTitle", "black_titled"},
+    {"WhiteElo", "white_elo"},
+    {"BlackElo", "black_elo"},
+    {"Result", "result"},
+    {"WhiteRatingDiff", "white_rating_diff"},
+    {"BlackRatingDiff", "black_rating_diff"},
+    {"TimeControl", "time_control"},
+    {"Termination", "termination"},
+    {"ECO", "eco"},
+    {"Opening", "opening"},
+    {"w_move", "white_n_moves"},
+    {"b_move", "black_n_moves"},
+    {"player_move", "player_n_moves"},
+    {"move", "moves"}
+};
+
 
 struct OrderedDict {
     std::unordered_map<std::string, std::string> data;
@@ -67,6 +91,7 @@ OrderedDict parse_single_game(const std::string &game_raw) {
     moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.\.\.)"), ",");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\d+\.)"), ".");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\s*(1-0|0-1|1/2-1/2)\s*$)"), "");
+    moves_str = std::regex_replace(moves_str, std::regex(R"([!?])"), "");
     moves_str = std::regex_replace(moves_str, std::regex(R"(\s+)"), "");
 
     // count moves
@@ -126,6 +151,23 @@ bool filter(const OrderedDict &game, int min_elo = 2000) {
         return false;
     }
 };
+
+OrderedDict normalize_to_schema(const OrderedDict &raw_game, const Schema &schema) {
+    OrderedDict out;
+
+    for (const auto &[pgn_key, csv_key] : schema) {
+
+        auto raw_key_value = raw_game.data.find(pgn_key);
+
+        if (raw_key_value != raw_game.data.end()) {
+            out.insert(csv_key, raw_key_value->second);
+        } else {
+            out.insert(csv_key, "");  // kosong jika tidak ada
+        }
+    }
+
+    return out;
+}
 
 struct CSVWriter {
     std::ofstream fout;
@@ -230,8 +272,9 @@ int main() {
                         OrderedDict game = parse_single_game(temp_game);
 
                         if(filter(game)){
-                            all_games.push_back(game);
-                            csv_target.write_game(game);
+                            OrderedDict safe_csv_game = normalize_to_schema(game, CSV_SCHEMA);
+                            all_games.push_back(safe_csv_game);
+                            csv_target.write_game(safe_csv_game);
                         }
                         current_game = "[Event "; // mulai game baru
                     }

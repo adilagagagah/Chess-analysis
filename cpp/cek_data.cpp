@@ -12,7 +12,7 @@
 
 using namespace std;
 
-static const int games_to_read = 5;  // jumlah game yang ingin dilihat
+static const int games_to_read = 10;  // jumlah game yang ingin dilihat
 
 
 int main() {
@@ -128,6 +128,8 @@ int main() {
         moves_str = std::regex_replace(moves_str, comment_regex, ""); // hapus komentar
         std::regex result_regex(R"(\s*(1-0|0-1|1/2-1/2)\s*$)");
         moves_str = std::regex_replace(moves_str, result_regex, ""); // hapus result
+        std::regex sign_regex(R"([!?])");
+        moves_str = std::regex_replace(moves_str, sign_regex, "");
         std::regex extra_spaces(R"(\s+)");
         moves_str = std::regex_replace(moves_str, extra_spaces, ""); // rapikan spasi
 
