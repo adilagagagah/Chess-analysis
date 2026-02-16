@@ -15,7 +15,7 @@ using namespace std;
 using namespace std::chrono;
 namespace fs = std::filesystem;
 
-static const int games_to_read = 94847276;  // jumlah game yang ingin dilihat
+static const int games_to_read = 100000;  // jumlah game yang ingin dilihat
 static const size_t  TOTAL_GAMES = 94847276;
 static const size_t  BATCH_SIZE = 10000;
 static const size_t  LOG_CHECKPOINT = 20000;
