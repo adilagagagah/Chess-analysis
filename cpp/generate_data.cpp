@@ -15,12 +15,12 @@ using namespace std;
 using namespace std::chrono;
 namespace fs = std::filesystem;
 
-static const int games_to_read = 5000;  // jumlah game yang ingin dilihat
+static const int games_to_read = 100000;  // jumlah game yang ingin dilihat
 static const size_t  TOTAL_GAMES = 94847276;
-static const size_t  BATCH_SIZE = 1000;
+static const size_t  BATCH_SIZE = 10000;
 static const size_t  LOG_CHECKPOINT = 20000;
 
-fs::path FILE_NAME = "cpp_test_lichess_rapid_elo2000.csv";
+fs::path FILE_NAME = "cpp_lichess_rapid_elo2000.csv";
 fs::path BASE_PATH = "C:/Users/gagah/Documents/Portofolios/Chess-analysis";
 fs::path SOURCE_PATH = BASE_PATH / "lichess_db_standard_rated_2025-12.pgn.zst";
 fs::path OUTPUT_PATH = BASE_PATH / "data" / FILE_NAME;
