@@ -8,15 +8,21 @@
 #include <regex>
 #include <chrono>
 #include <iomanip>
+#include <filesystem>
 
 
 using namespace std;
 using namespace std::chrono;
+namespace fs = std::filesystem;
 
-static const int games_to_read = 100;  // jumlah game yang ingin dilihat
+static const int games_to_read = 94847276;  // jumlah game yang ingin dilihat
 static const size_t  TOTAL_GAMES = 94847276;
-static const size_t  BATCH_SIZE = 50;
-static const size_t  LOG_CHECKPOINT = 100;
+static const size_t  BATCH_SIZE = 10000;
+static const size_t  LOG_CHECKPOINT = 20000;
+
+fs::path BASE_PATH = "C:/Users/gagah/Documents/Portofolios/Chess-analysis";
+fs::path SOURCE_PATH = BASE_PATH / "lichess_db_standard_rated_2025-12.pgn.zst";
+fs::path OUTPUT_PATH = BASE_PATH / "data" / "cpp_lichess_rapid_elo2000.csv";
 
 using Schema = std::vector<std::pair<std::string, std::string>>;
 const Schema CSV_SCHEMA = {
@@ -201,7 +207,7 @@ struct CSVWriter {
     std::ofstream fout;
     bool header_written = false;
 
-    CSVWriter(const std::string &filename) {
+    CSVWriter(const fs::path &filename) {
         fout.open(filename);
         if (!fout) {
             throw std::runtime_error("Cannot open CSV file");
@@ -250,8 +256,8 @@ int main() {
     cerr << "[INFO] Starting PGN parsing..." << endl;
     auto start_time = std::chrono::steady_clock::now();
     
-    const string file_path = "C:/Users/gagah/Documents/Portofolios/Chess-analysis/lichess_db_standard_rated_2025-12.pgn.zst";
-    CSVWriter csv_target("C:/Users/gagah/Documents/Portofolios/Chess-analysis/data/test_cpp_lichess_rapid_elo2000.csv");
+    const fs::path file_path = SOURCE_PATH;
+    CSVWriter csv_target(OUTPUT_PATH);
 
     // Baca file .zst secara streaming
     ifstream fin(file_path, ios::binary);
