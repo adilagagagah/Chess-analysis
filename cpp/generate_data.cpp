@@ -10,14 +10,13 @@
 #include <iomanip>
 
 
-
 using namespace std;
 using namespace std::chrono;
 
-static const int games_to_read = 200;  // jumlah game yang ingin dilihat
+static const int games_to_read = 100;  // jumlah game yang ingin dilihat
 static const size_t  TOTAL_GAMES = 94847276;
-static const size_t  total_csv = 100000;
-static const size_t  BATCH_SIZE = 10;
+static const size_t  BATCH_SIZE = 50;
+static const size_t  LOG_CHECKPOINT = 100;
 
 using Schema = std::vector<std::pair<std::string, std::string>>;
 const Schema CSV_SCHEMA = {
@@ -75,12 +74,10 @@ struct OrderedDict {
     }
 };
 
-OrderedDict parse_single_game(const std::string &game_raw) {
+OrderedDict parse_game_header(const string &raw_game) {
 
     OrderedDict game;
-    std::stringstream ss(game_raw);
-
-    /* ================= HEADER ================= */
+    std::stringstream ss(raw_game);
     std::string header_line;
 
     while (std::getline(ss, header_line)) {
@@ -103,12 +100,18 @@ OrderedDict parse_single_game(const std::string &game_raw) {
         }
     }
 
-    /* ================= MOVES ================= */
-    std::string moves_line;
-    std::string moves_str;
+    return game;
+}
 
-    while (std::getline(ss, moves_line)) {
-        moves_str += moves_line + " ";
+OrderedDict parse_game_moves(const OrderedDict &game_header, const string &raw_game) {
+    OrderedDict game = game_header;
+    std::string line;
+    std::string moves_str;
+    std::stringstream ss(raw_game);
+
+    while (std::getline(ss, line)) {
+        if (!line.empty() && line[0] == '[') continue;
+        moves_str += line + " ";
     }
 
     // cleaning moves
@@ -142,13 +145,13 @@ OrderedDict parse_single_game(const std::string &game_raw) {
     return game;
 }
 
-bool filter(const OrderedDict &game, int min_elo = 2000) {
-    auto w_elo = game.data.find("WhiteElo");
-    auto b_elo = game.data.find("BlackElo");
-    auto t_con = game.data.find("TimeControl");
+bool filter_game(const OrderedDict &game_header, int min_elo = 2000) {
+    auto w_elo = game_header.data.find("WhiteElo");
+    auto b_elo = game_header.data.find("BlackElo");
+    auto t_con = game_header.data.find("TimeControl");
 
     // cek apakah data ada di dalam dictionary game
-    if (w_elo == game.data.end() || b_elo == game.data.end() || t_con == game.data.end()){
+    if (w_elo == game_header.data.end() || b_elo == game_header.data.end() || t_con == game_header.data.end()){
         return false;
     }
 
@@ -258,8 +261,9 @@ int main() {
     }
 
     // Bisa dekompres chunk per chunk
-    ZSTD_DCtx* dctx = ZSTD_createDCtx();
-    if (!dctx) {
+    ZSTD_DStream* dstream = ZSTD_createDStream();
+    ZSTD_initDStream(dstream);
+    if (!dstream) {
         cerr << "[ERROR] Cannot create ZSTD context\n";
         return 1;
     }
@@ -270,8 +274,7 @@ int main() {
     vector<char> inBuf(IN_BUF_SIZE);
     vector<char> outBuf(OUT_BUF_SIZE);
 
-    std::vector<OrderedDict> all_games;  // menyimpan seluruh game
-    string temp_game;
+    vector<OrderedDict> all_games;  // menyimpan seluruh game
     string current_game;
 
     size_t scanned_games = 0;
@@ -279,17 +282,17 @@ int main() {
     
     bool game_finished = false;
 
-    while (all_games.size() < games_to_read && fin) {
+    while (collected_games < games_to_read && fin) {
         fin.read(inBuf.data(), inBuf.size());
         size_t bytes_read = fin.gcount();
         if (bytes_read == 0) break;
 
         ZSTD_inBuffer input{ inBuf.data(), bytes_read, 0 };
 
-        while (input.pos < input.size && all_games.size() < games_to_read) {
+        while (input.pos < input.size && collected_games < games_to_read) {
 
             ZSTD_outBuffer output{ outBuf.data(), outBuf.size(), 0 };
-            size_t ret = ZSTD_decompressStream(dctx, &output, &input);
+            size_t ret = ZSTD_decompressStream(dstream, &output, &input);
             
             if (ZSTD_isError(ret)) {
                 cerr << "[ERROR] ZSTD decompress error: "
@@ -297,43 +300,51 @@ int main() {
                 return 1;
             }
 
-            for (size_t i = 0; i < output.pos; ++i) {
-                char c = outBuf[i];
-                current_game.push_back(c);
+            string chunk(outBuf.data(), output.pos);
+            stringstream ss(chunk);
+            string line;
+            
+            while (getline(ss, line)) {
+                if (line.rfind("[Event ", 0) == 0) {  // masuk setiap game ketika awal nya "[Event"
 
-                // jika menemukan "[Event " dan current_game sudah punya data
-                if (current_game.size() > 7 && current_game.substr(current_game.size()-7) == "[Event ") {
-                    // simpan game sebelumnya
-                    if (current_game.size() > 7) {
+                    if (!current_game.empty()) {  // pengecekan di game pertama
 
-                        // mendapatkan data satu game
-                        temp_game = current_game.substr(0, current_game.size()-7);
-                        OrderedDict game = parse_single_game(temp_game);
+                        OrderedDict game_header = parse_game_header(current_game);
+                        // all_games.push_back(game_header);
 
-                        if(filter(game)){
+                        // FILTER GAME YANG SESUAI
+                        if (filter_game(game_header)){
+                            OrderedDict game = parse_game_moves(game_header, current_game);
                             OrderedDict safe_csv_game = normalize_to_schema(game, CSV_SCHEMA);
                             all_games.push_back(safe_csv_game);
-                            // csv_target.write_game(safe_csv_game);
                             collected_games++;
                             
                             if (all_games.size() >= BATCH_SIZE) {
                                 flush_batch_to_csv(all_games, csv_target);
                             }
-                        }
-                        current_game = "[Event "; // mulai game baru
-                        scanned_games++;
+                        } 
 
-                        if (scanned_games % 10 == 0){
+                        current_game.clear();
+                        scanned_games++;
+                        
+                        if (scanned_games % LOG_CHECKPOINT == 0){
                             log_progress(scanned_games, collected_games, TOTAL_GAMES, start_time);
+                        }
+
+                        if (collected_games >= games_to_read) {
+                            cout << "\n\nTOTAL GAMES :" << collected_games << "\n";
+                            break;
                         }
                     }
                 }
-                if (all_games.size() >= games_to_read) break;
+
+                current_game += line;
+                current_game += "\n";
             }
         }
     }
 
-    ZSTD_freeDCtx(dctx);
+    ZSTD_freeDStream(dstream);
 
     // tampilkan
     // for (size_t i = 0; i < all_games.size(); ++i) {

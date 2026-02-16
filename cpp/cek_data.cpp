@@ -12,6 +12,8 @@
 
 using namespace std;
 
+// note :
+// game ke 2358 memiliki header yang terpisah empty line
 static const int games_to_read = 3;  // jumlah game yang ingin dilihat
 
 
@@ -66,44 +68,40 @@ int main() {
             stringstream ss(chunk);
             string line;
 
-            while (getline(ss, line)){                
-                if(line.empty() && !current_game.empty()){
-                    blank++;
+            while (getline(ss, line)) {
+                if (line.rfind("[Event ", 0) == 0) {  // masuk setiap game ketika awal nya "[Event"
 
-                    if(blank % 2 == 0){
+                    // masuk setiap game
+                    if (!current_game.empty()) {     // pengecekan di game pertama
+
                         scanned_games++;
 
-                        cout << "===== GAME " << (scanned_games) << " =====\n";
+                        cout << "===== GAME " << scanned_games << " =====\n";
                         cout << current_game;
 
-                        // filter
-
+                        // ==============================
+                        // FILTER
                         // parse single game => dict single game
-
                         // convert column to csv schema
-
                         // add to vektor batch (all_games)
-
                         // logging progress
-
                         // after reached batch number, convert to csv
-
-
+                        // ==============================
 
                         current_game.clear();
+
+                        if (scanned_games >= games_to_read) {
+                            cout << "total games :" << games_to_read << "\n";
+                            return 1;
+                        }
                     }
-                } else {
-                    current_game += line;
-                    current_game += "\n";
-                    // raw_game.push_back(line);
                 }
 
-                if (scanned_games >= games_to_read){
-                    cout << "total games :" << games_to_read << "\n";
-
-                    return 1;
-                }
+                // tambahkan baris ke game aktif
+                current_game += line;
+                current_game += "\n";
             }
+
         }
     }
 
