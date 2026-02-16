@@ -15,14 +15,15 @@ using namespace std;
 using namespace std::chrono;
 namespace fs = std::filesystem;
 
-static const int games_to_read = 100000;  // jumlah game yang ingin dilihat
+static const int games_to_read = 5000;  // jumlah game yang ingin dilihat
 static const size_t  TOTAL_GAMES = 94847276;
-static const size_t  BATCH_SIZE = 10000;
+static const size_t  BATCH_SIZE = 1000;
 static const size_t  LOG_CHECKPOINT = 20000;
 
+fs::path FILE_NAME = "cpp_test_lichess_rapid_elo2000.csv";
 fs::path BASE_PATH = "C:/Users/gagah/Documents/Portofolios/Chess-analysis";
 fs::path SOURCE_PATH = BASE_PATH / "lichess_db_standard_rated_2025-12.pgn.zst";
-fs::path OUTPUT_PATH = BASE_PATH / "data" / "cpp_lichess_rapid_elo2000.csv";
+fs::path OUTPUT_PATH = BASE_PATH / "data" / FILE_NAME;
 
 using Schema = std::vector<std::pair<std::string, std::string>>;
 const Schema CSV_SCHEMA = {
@@ -49,7 +50,42 @@ const Schema CSV_SCHEMA = {
 };
 
 
-void log_progress(long scanned, long collected, long total, std::chrono::steady_clock::time_point start_time) {
+class Logger {
+private:
+    std::ofstream file;
+
+    std::string timestamp() {
+        auto now = std::chrono::system_clock::now();
+        auto t = std::chrono::system_clock::to_time_t(now);
+
+        std::ostringstream ss;
+        ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
+        return ss.str();
+    }
+
+public:
+    Logger(const std::filesystem::path& path) {
+        fs::path log_path = BASE_PATH / path;
+        std::filesystem::create_directories(log_path.parent_path());
+        file.open(log_path, std::ios::app);
+        if (!file) {
+            throw std::runtime_error("Cannot open log file");
+        }
+    }
+
+    void info(const std::string& msg, bool also_console = false) {
+        std::string full =
+            "[" + timestamp() + "] [INFO] " + msg;
+
+        file << full << "\n";
+
+        if (also_console) {
+            std::cerr << full << std::endl;
+        }
+    }
+};
+
+string log_progress(long scanned, long collected, long total, std::chrono::steady_clock::time_point start_time) {
 
     auto now = steady_clock::now();
     double elapsed_sec = duration_cast<seconds>(now - start_time).count();
@@ -58,14 +94,15 @@ void log_progress(long scanned, long collected, long total, std::chrono::steady_
     double pct = (double)scanned / total * 100.0;
     double eta_sec = speed > 0 ? (total - scanned) / speed : 0.0;
 
-    cerr << "\r[INFO] "
-         << "Scanned: " << scanned
-         << " | Collected: " << collected
-         << " | " << fixed << setprecision(2) << pct << "%"
-         << " | Speed: " << fixed << setprecision(0) << speed << " g/s"
-         << " | Elapsed: " << (long)elapsed_sec << " s"
-         << " | ETA: " << (long)eta_sec << " s"
-         << flush;
+    std::ostringstream oss;
+    oss << "Scanned: " << scanned
+        << " | Collected: " << collected
+        << " | " << fixed << setprecision(2) << pct << "%"
+        << " | Speed: " << fixed << setprecision(0) << speed << " g/s"
+        << " | Elapsed: " << (long)elapsed_sec << " s"
+        << " | ETA: " << (long)eta_sec << " s";
+    
+    return oss.str();
 }
 
 struct OrderedDict {
@@ -253,7 +290,9 @@ void flush_batch_to_csv(std::vector<OrderedDict> &batch, CSVWriter &csv) {
 
 
 int main() {
-    cerr << "[INFO] Starting PGN parsing..." << endl;
+    Logger logger("logs/parser.log");
+    logger.info("======================================");
+    logger.info("Starting PGN parsing...", true);
     auto start_time = std::chrono::steady_clock::now();
     
     const fs::path file_path = SOURCE_PATH;
@@ -334,7 +373,8 @@ int main() {
                         scanned_games++;
                         
                         if (scanned_games % LOG_CHECKPOINT == 0){
-                            log_progress(scanned_games, collected_games, TOTAL_GAMES, start_time);
+                            string progress = log_progress(scanned_games, collected_games, TOTAL_GAMES, start_time);
+                            cerr << "\r[INFO] " << progress << std::flush;
                         }
 
                         if (collected_games >= games_to_read) {
@@ -368,11 +408,12 @@ int main() {
     auto total_sec =
         std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
 
-    cerr << "\n[INFO] Finished." << endl;
-    cerr << "[INFO] Total scanned   : " << scanned_games << endl;
-    cerr << "[INFO] Total collected : " << collected_games << endl;
-    cerr << "[INFO] Total time      : " << total_sec << " seconds" << endl;
-
+    logger.info("Run finished    : " + FILE_NAME.string(), true);
+    logger.info("Total scanned   : " + std::to_string(scanned_games), true);
+    logger.info("Total collected : " + std::to_string(collected_games), true);
+    logger.info("Total time      : " + std::to_string(total_sec) + " seconds", true);
+    logger.info("Summary         : " + log_progress(scanned_games, collected_games, TOTAL_GAMES, start_time), true);
+    logger.info("======================================\n");
 
     return 0;
 }
