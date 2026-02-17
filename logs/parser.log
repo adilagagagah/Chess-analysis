@@ -25,3 +25,12 @@
 [2026-02-17 10:41:48] [INFO] Summary         : Scanned: 94842976 | Collected: 127798 | 100.00% | Speed: 17525 g/s | Elapsed: 5412 s | ETA: 0 s
 [2026-02-17 10:41:48] [INFO] ======================================
 
+[2026-02-17 13:47:08] [INFO] ======================================
+[2026-02-17 13:47:08] [INFO] Starting PGN parsing...
+[2026-02-17 14:08:03] [INFO] Run finished    : cpp_lichess_blitz_elo2200_100k.csv
+[2026-02-17 14:08:03] [INFO] Total scanned   : 6201500
+[2026-02-17 14:08:03] [INFO] Total collected : 100000
+[2026-02-17 14:08:03] [INFO] Total time      : 1254 seconds
+[2026-02-17 14:08:03] [INFO] Summary         : Scanned: 6201500 | Collected: 100000 | 6.54% | Speed: 4945 g/s | Elapsed: 1254 s | ETA: 17924 s
+[2026-02-17 14:08:03] [INFO] ======================================
+

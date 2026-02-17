@@ -19,14 +19,14 @@ using namespace std;
 using namespace std::chrono;
 namespace fs = std::filesystem;
 
-static const int games_to_read = 200000;  // jumlah game yang ingin dilihat
+static const int games_to_read = 100000;  // jumlah game yang ingin dilihat
 static const size_t  TOTAL_GAMES = 94847276;
 static const size_t  BATCH_SIZE = 5000;
 static const size_t  LOG_CHECKPOINT = 20000;
 
 constexpr int MIN_ELO = 2200;
 
-fs::path FILE_NAME = "cpp_lichess_rapid_elo" + std::to_string(MIN_ELO) + ".csv";
+fs::path FILE_NAME = "cpp_lichess_blitz_elo" + std::to_string(MIN_ELO) + "_100k.csv";
 fs::path BASE_PATH = "C:/Users/gagah/Documents/Portofolios/Chess-analysis";
 fs::path SOURCE_PATH = BASE_PATH / "lichess_db_standard_rated_2025-12.pgn.zst";
 fs::path OUTPUT_PATH = BASE_PATH / "data" / FILE_NAME;
@@ -225,7 +225,7 @@ bool filter_game(const OrderedDict &game_header, int min_elo = MIN_ELO) {
         int base_time = std::stoi(time_con.substr(0, plus_sign));
 
         // filter time control
-        if (base_time < 600 || base_time > 1800){
+        if (base_time < 180 || base_time > 300){
             return false;
         }
 
@@ -304,7 +304,7 @@ void flush_batch_to_csv(std::vector<OrderedDict> &batch, CSVWriter &csv) {
 
 int main() {
     prevent_sleep();
-    
+
     Logger logger("logs/parser.log");
     logger.info("======================================");
     logger.info("Starting PGN parsing...", true);
